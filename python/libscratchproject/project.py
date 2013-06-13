@@ -92,7 +92,6 @@ class Project(ScratchObj):
                     'revision' : ProjectRevision(d)})
 
         return self._versions_cache
-            
 
     @property
     def info(self):
@@ -106,7 +105,7 @@ class Project(ScratchObj):
                 return Sprite(child)
             else:
                 return BaseObj(child)
-                
+
         return [convertChild(child) for child in self._d['children']]
 
     @property
