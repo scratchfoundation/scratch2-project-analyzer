@@ -1,1 +1,1 @@
-from project import _Project as Project
+from project import Project

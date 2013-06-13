@@ -1,3 +1,4 @@
+import gzip
 import os
 import simplejson
 
@@ -58,8 +59,11 @@ class Sprite(ScratchObj):
         return [ScratchMediaObj(x) for x in self._d['sounds']]
 
 
-class _Project(ScratchObj):
-    def __init__(self, project_id, load_versions=False):
+class Project(ScratchObj):
+    def __init__(self, project_id):
+        self.project_id = project_id
+        self._versions_cache = []
+
         filepath = \
             os.path.join(calculate_project_dirpath(PROJECT_DIR_PREFIX, 
             project_id), 'LATEST')
@@ -67,6 +71,28 @@ class _Project(ScratchObj):
             d = simplejson.loads(fp.read())
 
         ScratchObj.__init__(self, d)
+
+    @property
+    def versions(self):
+        if len(self._versions_cache):
+            return self._versions_cache
+
+        dirname = calculate_project_dirpath(VERSION_DIR_PREFIX,
+            self.project_id)
+
+        files = os.listdir(dirname)
+        files.sort()
+
+        for filename in files:
+            filepath = os.path.join(dirname, filename)
+            with gzip.open(filepath, 'rb') as fp:
+                d = simplejson.loads(fp.read())
+
+                self._versions_cache.append({'timestamp' : int(filename.replace('.gz', '')),
+                    'revision' : ProjectRevision(d)})
+
+        return self._versions_cache
+            
 
     @property
     def info(self):
@@ -86,3 +112,8 @@ class _Project(ScratchObj):
     @property
     def sprites(self):
         return [Sprite(x) for x in self._d['children']]
+
+
+class ProjectRevision(Project):
+    def __init__(self, project_dict):
+        ScratchObj.__init__(self, project_dict)
