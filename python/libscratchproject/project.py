@@ -18,7 +18,7 @@ class BaseObj(object):
         self._d = info_dict
 
     def __getattr__(self, name):
-        if self._d.has_key(name):
+        if name in self._d:
             return self._d[name]
         else:
             raise AttributeError
@@ -74,7 +74,7 @@ class Project(ScratchObj):
 
     @property
     def versions(self):
-        if len(self._versions_cache):
+        if self._versions_cache:
             return self._versions_cache
 
         dirname = calculate_project_dirpath(VERSION_DIR_PREFIX,
@@ -101,7 +101,7 @@ class Project(ScratchObj):
     @property
     def children(self):
         def convertChild(child):
-            if child.has_key('spriteInfo'):
+            if 'spriteInfo' in child:
                 return Sprite(child)
             else:
                 return BaseObj(child)
