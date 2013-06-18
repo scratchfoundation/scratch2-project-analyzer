@@ -29,7 +29,10 @@ class ScratchObj(BaseObj):
 
     @property
     def variables(self):
-        return [ScratchDataStructureObj(x) for x in self._d['variables']]
+        try:
+            return [ScratchDataStructureObj(x) for x in self._d['variables']]
+        except KeyError:
+            return []
 
 
 class ScratchMediaObj(BaseObj):
