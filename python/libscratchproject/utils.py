@@ -19,5 +19,5 @@ def extract_blocks_from_script(script):
     '''
     blocks = []
     blocknames = []
-    blocks = list(_real_extract_blocks_from_stack(stack[2]))
+    blocks = list(_real_extract_blocks_from_stack(script[2]))
     return blocks
