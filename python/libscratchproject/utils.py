@@ -2,7 +2,7 @@
 
 def _real_extract_blocks_from_stack(stack):
     for block in stack:
-        if isinstance(block, list):
+        if isinstance(block, list) and block:
             if isinstance(block[0], str): # Got a primitive
                 yield block
                 for item in _real_extract_blocks_from_stack(block[1:]):
