@@ -61,6 +61,9 @@ class Sprite(ScratchObj):
     def sounds(self):
         return [ScratchMediaObj(x) for x in self._d['sounds']]
 
+    @property
+    def assets(self):
+        return self.sounds + self.costumes
 
 class Project(ScratchObj):
     def __init__(self, project_id):
