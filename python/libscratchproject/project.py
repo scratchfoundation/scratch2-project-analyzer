@@ -122,7 +122,11 @@ class Project(ScratchObj):
 
     @property
     def sprites(self):
-        return [Sprite(x) for x in self._d['children']]
+        ret = []
+        for child in self.children:
+            if isinstance(child, Sprite):
+                ret.append(child)
+        return ret
 
 
 class ProjectRevision(Project):
