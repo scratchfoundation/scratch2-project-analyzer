@@ -55,11 +55,17 @@ class Sprite(ScratchObj):
 
     @property
     def costumes(self):
-        return [ScratchMediaObj(x) for x in self._d['costumes']]
+        try:
+            return [ScratchMediaObj(x) for x in self._d['costumes']]
+        except KeyError:
+            return []
 
     @property
     def sounds(self):
-        return [ScratchMediaObj(x) for x in self._d['sounds']]
+        try:
+            return [ScratchMediaObj(x) for x in self._d['sounds']]
+        except KeyError:
+            return []
 
     @property
     def assets(self):
