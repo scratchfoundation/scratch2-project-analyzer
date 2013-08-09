@@ -43,7 +43,6 @@ class ScratchDataStructureObj(BaseObj):
     def __init__(self, info_dict):
         BaseObj.__init__(self, info_dict)
 
-
 class Sprite(ScratchObj):
     def __init__(self, sprite_dict):
         ScratchObj.__init__(self, sprite_dict)
@@ -52,6 +51,10 @@ class Sprite(ScratchObj):
     def spriteInfo(self):
         return namedtuple('SpriteInfo',
             self._d['info'].keys())(**(self._d['info']))
+
+    @property
+    def scripts(self):
+        return self._d.get('scripts', [])
 
     @property
     def costumes(self):
@@ -71,6 +74,19 @@ class Sprite(ScratchObj):
     def assets(self):
         return self.sounds + self.costumes
 
+    def has_make_a_block(self):
+
+        def traverse(script_list):
+            for script in script_list:
+                if hasattr(script, '__iter__'):
+                    if 'procDef' in script:
+                        return True
+                    elif traverse(script):
+                        return True
+            return False
+
+        return traverse(self.scripts)
+
 class Project(ScratchObj):
     def __init__(self, project_id):
         self.project_id = project_id
@@ -81,6 +97,8 @@ class Project(ScratchObj):
             project_id), 'LATEST')
         with open(filepath) as fp:
             d = simplejson.loads(fp.read())
+            if not isinstance(d, dict):
+                raise Exception('Unexpected JSON serialization: {}'.format(d))
 
         ScratchObj.__init__(self, d)
 
@@ -127,6 +145,16 @@ class Project(ScratchObj):
             if isinstance(child, Sprite):
                 ret.append(child)
         return ret
+
+    def uses_make_a_block(self):
+        """
+        Returns whether any of the sprites in this project use the "make a block"
+        function.
+        """
+        for sprite in self.sprites:
+            if sprite.has_make_a_block():
+                return True
+        return False
 
 
 class ProjectRevision(Project):
